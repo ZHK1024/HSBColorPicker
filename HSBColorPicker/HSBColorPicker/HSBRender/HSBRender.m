@@ -66,14 +66,16 @@ struct ZHKSize {
 }
 
 - (void)refreshBuffer {
-    memcpy(self.huesBuffer.contents, &_hues, sizeof(float));
     struct ZHKSize size = {_layer.drawableSize.width, _layer.drawableSize.height};
     if (CGSizeEqualToSize(_layer.drawableSize, CGSizeZero)) {
         CGFloat scale = [UIScreen mainScreen].scale;
         size.width  = CGRectGetWidth(_layer.frame) * scale;
         size.height = CGRectGetHeight(_layer.frame) * scale;
     }
+    // 传入绘制区域的宽高
     memcpy(self.sizeBuffer.contents, &size, sizeof(struct ZHKSize));
+    // 传入色相值
+    memcpy(self.huesBuffer.contents, &_hues, sizeof(float));
 }
 
 #pragma mark - Setter
@@ -85,6 +87,8 @@ struct ZHKSize {
         _layer.pixelFormat = MTLPixelFormatBGRA8Unorm;
         _layer.framebufferOnly = NO;
         _layer.contentsScale = [UIScreen mainScreen].scale;
+        // 遇到个 右侧, 底部有级像素未绘制, 呈现黑色
+        // 简单天下坑, 暂时不耽误用, 只是显示层的误差(1%的误差)
         _layer.contentsRect = CGRectMake(0, 0, 0.99, 0.99);
         [self refreshBuffer];
         [self render];

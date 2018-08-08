@@ -36,6 +36,12 @@
 
 #pragma mark -
 
+/**
+ 计算取色
+
+ @param point 色盘上颜色的点
+ @return 颜色 HSB
+ */
 - (UIColor *)pickColorWithPoint:(CGPoint)point {
     CGFloat h = _slider.value;
     CGFloat s = point.x / CGRectGetWidth(_metalLayer.frame);
@@ -54,6 +60,7 @@
 }
 
 - (IBAction)sliderAction:(UISlider *)sender {
+    // 此处 slider 范围为 0 - 359, 值达到360 , 计算就出问题了, 色盘上变为多色渐变
     _render.hues = sender.value;
 }
 
